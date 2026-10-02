@@ -1,0 +1,11 @@
+{$MAIL_API_HOST} {
+  request_body {
+    max_size 1KB
+  }
+  header {
+    Strict-Transport-Security "max-age=31536000"
+    X-Content-Type-Options nosniff
+    Referrer-Policy no-referrer
+  }
+  reverse_proxy receiver:8080
+}

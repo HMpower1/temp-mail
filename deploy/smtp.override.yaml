@@ -1,0 +1,3 @@
+services:
+  receiver:
+    ports: !override ["25:2525"]

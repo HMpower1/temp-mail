@@ -1,0 +1,57 @@
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: tempmail
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}
+      POSTGRES_DB: tempmail
+    # Mail is ephemeral: no disk snapshots, backups or persistent volume.
+    tmpfs:
+      - /var/lib/postgresql/data:size=512m,mode=0700
+    shm_size: 64mb
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U tempmail"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+    mem_limit: 768m
+    logging: {driver: local, options: {max-size: 5m, max-file: '2'}}
+  receiver:
+    build: ../server
+    environment:
+      DATABASE_URL: postgresql://tempmail:${POSTGRES_PASSWORD}@db:5432/tempmail
+      MAIL_DOMAIN: ${MAIL_DOMAIN:-inbox.temp-mail.serwerbb.win}
+      MAIL_API_KEY: ${MAIL_API_KEY:?Set MAIL_API_KEY}
+      MAIL_INGRESS_READY: ${MAIL_INGRESS_READY:-false}
+    ports:
+      - "25:2525"
+    depends_on:
+      db: {condition: service_healthy}
+    restart: unless-stopped
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 512m
+    healthcheck:
+      test: [CMD, node, -e, "fetch('http://127.0.0.1:8080/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    logging: {driver: local, options: {max-size: 5m, max-file: '2'}}
+  caddy:
+    image: caddy:2-alpine
+    environment:
+      MAIL_API_HOST: ${MAIL_API_HOST:-mail-api.serwerbb.win}
+    ports: ["80:80", "443:443"]
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on: [receiver]
+    restart: unless-stopped
+    mem_limit: 256m
+    logging: {driver: local, options: {max-size: 5m, max-file: '2'}}
+volumes:
+  caddy_data:
+  caddy_config:
