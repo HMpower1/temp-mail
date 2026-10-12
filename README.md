@@ -1,85 +1,61 @@
 # Temp Mail
 
-Adres: https://temp-mail.serwerbb.win. Frontend i API działają na istniejącym hostingu Docker. Odbiór z internetu wymaga dostępnego TCP/25; `MAIL_INGRESS_READY=false` powoduje jawne ostrzeżenie w interfejsie.
+Produkcja: https://temp-mail.serwerbb.win. Istniejąca aplikacja Next.js 16 / React 19 / TypeScript / Tailwind, Fastify, PostgreSQL 17 tmpfs/UNLOGGED, Docker i Caddy.
 
-## Stack i bezpieczeństwo
+Skrzynki wyłącznie odbierają pocztę i mają twarde 60 minut. Przedłużanie wyłączone. HTML sanityzowany i izolowany w iframe sandbox bez połączeń zewnętrznych. Załączniki: tylko nazwy i rozmiary. Odbiór internetowy Mailgun EU jest skonfigurowany i potwierdzony realną wiadomością: EMAIL_SETUP.md. AdSense wyłączone: ADSENSE_SETUP.md. Stan i ograniczenia: PLAN.md.
 
-Next.js 16, React 19, TypeScript, Tailwind CSS; Fastify, PostgreSQL 17, smtp-server, mailparser i sanitize-html. Docker Compose, Caddy / Let's Encrypt oraz DNS Cloudflare z osobnym DDNS. Wyłącznie odbiór poczty: brak wysyłania, logowania SMTP i relaying. Nieznani odbiorcy są odrzucani podczas RCPT TO.
+## Aktualizacja
+Node >=22.13, npm i Docker Compose. Zachowaj istniejące deploy/.env.
 
-Sekret dostępu 256-bitowy znajduje się w cookie Secure/HttpOnly/SameSite=Strict; baza przechowuje tylko SHA-256. Sekret API pozostaje w prywatnej sieci Docker. HTML jest oczyszczany i wyświetlany w iframe `sandbox=""` z dodatkową CSP. Skrypty, obrazy, odnośniki i formularze są usuwane. Nazwy załączników są wyświetlane jako tekst; ich zawartość jest odrzucana.
+1. npm ci oraz npm ci --prefix server
+2. npm run lint
+3. node --experimental-strip-types --test server/test/*.test.mjs
+4. npx tsc --noEmit
+5. npm run build
+6. docker compose -p temp-mail --env-file deploy/.env -f deploy/compose.home.yaml up -d --build
+7. node deploy/verify.mjs
 
-## Retencja
+Obraz web kopiuje standalone z wcześniejszego builda. SMTP do lokalnych testów na 127.0.0.1:2525, API receiver tylko w sieci Docker. Nie dołączaj smtp.override.yaml przy wdrażaniu Mailgun. Produkcja używa compose.home.yaml i caddy_default. compose.yaml jest starszym wariantem osobnego serwera. Caddyblock w deploy/caddy.home.block, wyjątek root ads.txt opisany w ADSENSE_SETUP.md.
 
-Serwer blokuje dostęp i odbiór dokładnie w `expires_at`: 3600000 ms od utworzenia, chyba że użytkownik przedłuży ważność do maksymalnie 24 h od utworzenia. Zapisy SMTP ponownie sprawdzają czas po zakończeniu transmisji.
+## Zmienne produkcyjne
+- POSTGRES_PASSWORD, MAIL_API_KEY: istniejące sekrety. DATABASE_URL i MAIL_API_ORIGIN budowane przez Compose. SITE_ORIGIN=https://temp-mail.serwerbb.win.
+- MAIL_DOMAIN=inbox.temp-mail.serwerbb.win; MAIL_INGRESS_READY=true po potwierdzonym odbiorze.
+- MAILGUN_API_KEY: tylko provisioning, nie jest przekazywany aplikacji. MAILGUN_WEBHOOK_SIGNING_KEY: receiver, pobierany przez setup-mailgun.mjs.
+- NEXT_PUBLIC_ADSENSE_CLIENT, NEXT_PUBLIC_ADSENSE_SLOT_TOP, NEXT_PUBLIC_ADSENSE_SLOT_BOTTOM: rzeczywiste publiczne ID z AdSense, domyślnie puste.
+- ADSENSE_ENABLED=false, ADSENSE_SITE_STATUS puste, ADSENSE_CMP_PUBLISHED=false. Włączenie po Ready i testach CMP.
+- CLOUDFLARE_TOKEN_FILE: istniejący plik tokenu DNS montowany read-only przez compose.ddns.yaml.
 
-Fizyczne czyszczenie rekordów działa co 250 ms, przed odczytem oraz przy starcie. Obciążenie lub awaria mogą je opóźnić; nie jest to gwarancja wymazania w tej samej milisekundzie. Usunięcie skrzynki kaskadowo usuwa wiadomości. PostgreSQL używa tabel UNLOGGED i tmpfs bez trwałego wolumenu: restart bazy usuwa wszystkie skrzynki. Nie twórz kopii tej bazy, snapshotów RAM, core dumpów ani niezaszyfrowanego swapu. Infrastruktura może zachowywać własne dzienniki techniczne.
+Nie publikuj .env i sekretów. Baza bez trwałego wolumenu, restart PostgreSQL usuwa dane. Bez snapshotów/kopii treści, logowania body, cookie czy nagłówków podpisu. Limity pojedynczej instancji: 10 skrzynek/h, 180 żądań/min klienta, webhook 240/min; 100 wiadomości/20 MiB na skrzynkę, 2 MiB wiadomości, 1 MiB załącznika, 10 załączników, 4 MiB webhook.
 
-## Uruchomienie i aktualizacja
+## Przygotowanie prywatnego repozytorium — 2026-10-12
 
-Node.js >=22.13, npm, Docker Compose z obsługą `!override`.
+Serwis tymczasowych skrzynek pocztowych: Next.js, React, odbiornik SMTP/HTTP Node.js i PostgreSQL.
+
+Źródło bieżącego wdrożenia: `C:\Users\hmpow\Documents\Codex\2026-10-02\zbuduj-i-opublikuj-kompletn-aplikacj-webow-3\work\temp-mail`. Ten katalog jest oddzielną kopią przygotowaną do wersjonowania; działające kontenery nadal używają oryginału. Nie przeniesiono baz danych ani wolumenów. Nie dodano licencji open source.
+
+### Wymagania i instalacja
+
+Windows/PowerShell, Git, Docker Desktop z kontenerami Linux i Compose obsługującym `!override` (2.24.4 lub nowszy). Aplikacje JS wymagają Node.js 22.13+; projekty z pnpm używają pnpm 11.19.0. Backend wymaga Python 3.13 przy uruchomieniu poza Dockerem. Klonuj dopiero po utworzeniu potwierdzonego prywatnego repozytorium.
+
+### Konfiguracja, uruchomienie i testy
 
 ```powershell
 npm ci
-npm run build
-cd server
-npm ci
+npm ci --prefix server
 npm test
-cd ..
-node deploy/setup-env.mjs
-docker compose -p temp-mail --env-file deploy/.env -f deploy/compose.home.yaml -f deploy/smtp.override.yaml up -d --build
+npm run lint
+npm run typecheck
+npm run build
+if (!(Test-Path deploy/.env)) { Copy-Item deploy/.env.example deploy/.env }
+# Wypełnij zmienne w deploy/.env. Wariant domowy wymaga istniejącej sieci/bramy Caddy.
+docker compose --env-file deploy/.env -p temp-mail-dev -f deploy/compose.home.yaml config --quiet
+docker compose --env-file deploy/.env -p temp-mail-dev -f deploy/compose.home.yaml up -d --build
 ```
 
-Generator sekretów nie nadpisuje istniejącego pliku i nie wyświetla wartości. `deploy/.env` nie jest częścią archiwum źródeł. Wariant produkcyjny `compose.home.yaml` wykorzystuje sieć `caddy_default`; wpis proxy jest w `deploy/caddy.home.block`. `compose.yaml` jest alternatywą dla osobnego odbiornika/API z Caddy. Źródła mają także opcjonalną adaptację Worker, lecz domena produkcyjna działa na istniejącym serwerze.
+Wartości `.env.example` są szablonem, nie konfiguracją produkcyjną. Wypełnij lokalny `.env` niezależnymi losowymi sekretami; nie zastępuj działających kluczy bez planu rotacji. Porty i sieci produkcyjne są zajęte: używaj osobnego projektu Compose i wolnych portów. Temp Mail w wariancie domowym współdzieli bramę; pełne odizolowanie wymaga dodatkowej konfiguracji sieci i routingu. Nie wykonuj `down -v` na produkcji.
 
-Aktualizacja aplikacji: `npm run build`, potem powtórz komendę `up -d --build`. Aktualizacja frontendu nie usuwa skrzynek; restart PostgreSQL usuwa dane. Nie loguj treści, cookie, X-API-Key ani SMTP DATA.
+### Faktyczny stan kontroli i ograniczenia
 
-## Zmienne
+24 testy jednostkowe PASS na oryginalnych zależnościach. Build/lint/typecheck wymagają ponownej kontroli. Odbiornik server zachowuje własną wersję 1.0.0.
 
-| Zmienna | Gdzie i znaczenie |
-|---|---|
-| POSTGRES_PASSWORD | Compose: wygenerowane hasło PostgreSQL |
-| DATABASE_URL | Odbiornik: Compose buduje połączenie automatycznie |
-| MAIL_API_KEY | Web i odbiornik: ten sam losowy sekret, minimum 32 znaki |
-| MAIL_DOMAIN | Odbiornik: inbox.temp-mail.serwerbb.win |
-| MAIL_API_ORIGIN | Web: http://receiver:8080 w prywatnej sieci lub HTTPS API |
-| SITE_ORIGIN | Next.js: https://temp-mail.serwerbb.win; stałe źródło dla CSRF |
-| MAIL_INGRESS_READY | Odbiornik: true dopiero po zewnętrznym teście SMTP |
-| CLOUDFLARE_TOKEN_FILE | DDNS: ścieżka istniejącego pliku tokenu montowanego read-only |
-| PORT / SMTP_PORT | Opcjonalnie: 8080 / 2525; host mapuje SMTP na TCP/25 |
-
-Nie stosuj NEXT_PUBLIC_ dla sekretów. Nie zapisuj ich w Git ani dziennikach.
-
-## DNS i sieć
-
-| Typ | Nazwa | Wartość |
-|---|---|---|
-| A | temp-mail.serwerbb.win | publiczne IPv4, DNS only |
-| A | mx-temp.serwerbb.win | publiczne IPv4, DNS only |
-| MX | inbox.temp-mail.serwerbb.win | priorytet 10, mx-temp.serwerbb.win |
-| TXT | inbox.temp-mail.serwerbb.win | v=spf1 -all |
-| TXT | _dmarc.inbox.temp-mail.serwerbb.win | v=DMARC1; p=reject |
-
-Osobny DDNS aktualizuje tylko obydwa rekordy A tej aplikacji. Odbiór wymaga przekierowania routera TCP/25 na `192.168.1.36:25` oraz dopuszczenia ruchu w zaporze. HTTP/HTTPS wykorzystują istniejące przekierowania. SMTP w tej wersji nie reklamuje STARTTLS; nie włączaj MTA-STS wymagającego TLS bez dodania certyfikatu SMTP.
-
-## Limity
-
-10 nowych skrzynek na godzinę i 180 żądań API na minutę na klienta. 2 MB na wiadomość, 1 MB na załącznik, do 10 załączników. 100 wiadomości i 20 MB na skrzynkę. 50 połączeń SMTP równocześnie, limity na IP, jeden odbiorca na transmisję. Limiter ma ograniczoną pamięć i działa w pojedynczej instancji; przed skalowaniem horyzontalnym dodaj wspólny limiter.
-
-## Testy
-
-14 testów obejmuje unikalność, izolację, dokładną granicę wygaśnięcia, 24 h, usuwanie kaskadowe, rozmiary i pojemność, XSS, ograniczenia ruchu, klucz API, realną sesję SMTP, CSRF i tajne cookie. PGlite uruchamia silnik PostgreSQL; dodatkowy test produkcyjny wykorzystuje kontener PostgreSQL 17.
-
-```powershell
-node deploy/verify.mjs
-node server/verify-production.mjs
-```
-
-Pierwsza komenda sprawdza publiczne utworzenie, listę, przedłużenie i usunięcie. Druga dostarcza test przez **lokalny** SMTP do produkcyjnej bazy, odczytuje go publicznym API i usuwa skrzynkę. To nie potwierdza dostarczania przez zewnętrzny MTA. Osobno sprawdź TCP/25 z zewnątrz i odbierz wiadomość od zewnętrznego nadawcy.
-
-Po pozytywnej weryfikacji ustaw `MAIL_INGRESS_READY=true` w `deploy/.env` i wykonaj:
-
-```powershell
-docker compose -p temp-mail --env-file deploy/.env -f deploy/compose.home.yaml -f deploy/smtp.override.yaml up -d receiver
-```
-
-Stan i logi: `docker compose ... ps`, `docker logs temp-mail-receiver-1 --tail 30`, `docker logs temp-mail-web-1 --tail 30`. Kopia konfiguracji Caddy sprzed wdrożenia jest w katalogu roboczym zadania.
+Wyniki końcowe i audyt po poprawkach opisuje `KONTROLE.md`. Workflow ma uprawnienie `contents: read`, brak sekretów, przypięte Actions i osobny skan Gitleaks przed instalacją zależności. Obecność workflow nie oznacza, że CI na GitHub zostało uruchomione. Zabezpieczenia konta, prywatność zdalnego repo i zgodność SHA wymagają sprawdzenia po wysłaniu. Pierwsze wydanie 0.1.0 należy oznaczyć jako prerelease.

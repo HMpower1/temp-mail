@@ -1,0 +1,63 @@
+# 0.1.0 (prerelease)
+
+Aktualne źródła projektu, prywatne wersjonowanie, dokumentacja i kontrole.
+
+24/24 testy PASS; lint PASS; TypeScript PASS; build Next.js 16.3.8 PASS po poprawkach.
+
+Końcowy audyt npm/pnpm: critical: 0, high: 12, moderate: 7, low: 0.
+Odbiornik server: high: 1, critical: 0. Wersja pakietu pozostaje 1.0.0.
+
+| Pakiet | Waga | Poprawka wskazana przez bazę / uwaga | Źródło |
+|---|---|---|---|
+| `braces` | high | `{'name': 'eslint-config-next', 'version': '14.2.35', 'isSemVerMajor': True}` | [advisory](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm) |
+| `esbuild` | moderate | `{'name': 'drizzle-kit', 'version': '0.18.1', 'isSemVerMajor': True}` | [advisory](https://github.com/advisories/GHSA-67mh-4wv8-2f99) |
+| `esbuild` | moderate | `{'name': 'drizzle-kit', 'version': '0.18.1', 'isSemVerMajor': True}` | [advisory](https://github.com/advisories/GHSA-g7r4-m6w7-qqqr) |
+| `image-size` | high | `{'name': 'vinext', 'version': '1.1.0', 'isSemVerMajor': False}` | [advisory](https://github.com/advisories/GHSA-5p2g-fcmc-qvqq) |
+| `image-size` | high | `{'name': 'vinext', 'version': '1.1.0', 'isSemVerMajor': False}` | [advisory](https://github.com/advisories/GHSA-w3rx-r6r6-pgpr) |
+| `undici` | high | `{'name': '@cloudflare/vite-plugin', 'version': '1.63.1', 'isSemVerMajor': False}` | [advisory](https://github.com/advisories/GHSA-vmh5-mc38-953g) |
+| `undici` | high | `{'name': '@cloudflare/vite-plugin', 'version': '1.63.1', 'isSemVerMajor': False}` | [advisory](https://github.com/advisories/GHSA-p88m-4jfj-68fv) |
+| `undici` | high | `{'name': '@cloudflare/vite-plugin', 'version': '1.63.1', 'isSemVerMajor': False}` | [advisory](https://github.com/advisories/GHSA-vxpw-j846-p89q) |
+| `undici` | high | `{'name': '@cloudflare/vite-plugin', 'version': '1.63.1', 'isSemVerMajor': False}` | [advisory](https://github.com/advisories/GHSA-hm92-r4w5-c3mj) |
+| `undici` | high | `{'name': '@cloudflare/vite-plugin', 'version': '1.63.1', 'isSemVerMajor': False}` | [advisory](https://github.com/advisories/GHSA-g8m3-5g58-fq7m) |
+| `undici` | high | `{'name': '@cloudflare/vite-plugin', 'version': '1.63.1', 'isSemVerMajor': False}` | [advisory](https://github.com/advisories/GHSA-pr7r-676h-xcf6) |
+| `undici` | high | `{'name': '@cloudflare/vite-plugin', 'version': '1.63.1', 'isSemVerMajor': False}` | [advisory](https://github.com/advisories/GHSA-8xcm-r25x-g524) |
+| `undici` | high | `{'name': '@cloudflare/vite-plugin', 'version': '1.63.1', 'isSemVerMajor': False}` | [advisory](https://github.com/advisories/GHSA-4cwx-7wf7-3272) |
+| `undici` | high | `{'name': '@cloudflare/vite-plugin', 'version': '1.63.1', 'isSemVerMajor': False}` | [advisory](https://github.com/advisories/GHSA-m8rv-5g2x-5cg5) |
+| `undici` | high | `{'name': '@cloudflare/vite-plugin', 'version': '1.63.1', 'isSemVerMajor': False}` | [advisory](https://github.com/advisories/GHSA-jr45-8vmc-qm54) |
+| `undici` | high | `{'name': '@cloudflare/vite-plugin', 'version': '1.63.1', 'isSemVerMajor': False}` | [advisory](https://github.com/advisories/GHSA-v3r7-h72x-cjcm) |
+| `undici` | high | `{'name': '@cloudflare/vite-plugin', 'version': '1.63.1', 'isSemVerMajor': False}` | [advisory](https://github.com/advisories/GHSA-35p6-xmwp-9g52) |
+| `undici` | high | `{'name': '@cloudflare/vite-plugin', 'version': '1.63.1', 'isSemVerMajor': False}` | [advisory](https://github.com/advisories/GHSA-pmjh-fq2x-6v4x) |
+| `undici` | high | `{'name': '@cloudflare/vite-plugin', 'version': '1.63.1', 'isSemVerMajor': False}` | [advisory](https://github.com/advisories/GHSA-r53p-7pc4-xj5r) |
+| `undici` | high | `{'name': '@cloudflare/vite-plugin', 'version': '1.63.1', 'isSemVerMajor': False}` | [advisory](https://github.com/advisories/GHSA-rfgv-xxqx-mfg5) |
+| `undici` | high | `{'name': '@cloudflare/vite-plugin', 'version': '1.63.1', 'isSemVerMajor': False}` | [advisory](https://github.com/advisories/GHSA-3xpg-4rpp-hhhm) |
+| `undici` | high | `{'name': '@cloudflare/vite-plugin', 'version': '1.63.1', 'isSemVerMajor': False}` | [advisory](https://github.com/advisories/GHSA-2jfj-6hjv-fm6j) |
+| `undici` | high | `{'name': '@cloudflare/vite-plugin', 'version': '1.63.1', 'isSemVerMajor': False}` | [advisory](https://github.com/advisories/GHSA-2gqq-gqf2-x968) |
+| `undici` | high | `{'name': '@cloudflare/vite-plugin', 'version': '1.63.1', 'isSemVerMajor': False}` | [advisory](https://github.com/advisories/GHSA-w293-vg96-wgc3) |
+| `undici` | high | `{'name': '@cloudflare/vite-plugin', 'version': '1.63.1', 'isSemVerMajor': False}` | [advisory](https://github.com/advisories/GHSA-8436-99hf-9mmv) |
+| `undici` | high | `{'name': '@cloudflare/vite-plugin', 'version': '1.63.1', 'isSemVerMajor': False}` | [advisory](https://github.com/advisories/GHSA-rx4f-c7p8-82vq) |
+| `vite` | high | `{'name': 'vite', 'version': '8.3.4', 'isSemVerMajor': False}` | [advisory](https://github.com/advisories/GHSA-v6wh-96g9-6wx3) |
+| `vite` | high | `{'name': 'vite', 'version': '8.3.4', 'isSemVerMajor': False}` | [advisory](https://github.com/advisories/GHSA-fx2h-pf6j-xcff) |
+| `ws` | high | `{'name': '@cloudflare/vite-plugin', 'version': '1.63.1', 'isSemVerMajor': False}` | [advisory](https://github.com/advisories/GHSA-58qx-3vcg-4xpx) |
+| `ws` | high | `{'name': '@cloudflare/vite-plugin', 'version': '1.63.1', 'isSemVerMajor': False}` | [advisory](https://github.com/advisories/GHSA-96hv-2xvq-fx4p) |
+| `nodemailer (server)` | high | `{'name': 'nodemailer', 'version': '10.1.0', 'isSemVerMajor': True}` | [advisory](https://github.com/advisories/GHSA-c7w3-x93f-qmm8) |
+| `nodemailer (server)` | high | `{'name': 'nodemailer', 'version': '10.1.0', 'isSemVerMajor': True}` | [advisory](https://github.com/advisories/GHSA-vvjj-xcjg-gr5g) |
+| `nodemailer (server)` | high | `{'name': 'nodemailer', 'version': '10.1.0', 'isSemVerMajor': True}` | [advisory](https://github.com/advisories/GHSA-268h-hp4c-crq3) |
+| `nodemailer (server)` | high | `{'name': 'nodemailer', 'version': '10.1.0', 'isSemVerMajor': True}` | [advisory](https://github.com/advisories/GHSA-wqvq-jvpq-h66f) |
+| `nodemailer (server)` | high | `{'name': 'nodemailer', 'version': '10.1.0', 'isSemVerMajor': True}` | [advisory](https://github.com/advisories/GHSA-p6gq-j5cr-w38f) |
+| `nodemailer (server)` | high | `{'name': 'nodemailer', 'version': '10.1.0', 'isSemVerMajor': True}` | [advisory](https://github.com/advisories/GHSA-8m3c-c648-2xjj) |
+| `nodemailer (server)` | high | `{'name': 'nodemailer', 'version': '10.1.0', 'isSemVerMajor': True}` | [advisory](https://github.com/advisories/GHSA-wmmp-3585-3rmp) |
+| `nodemailer (server)` | high | `{'name': 'nodemailer', 'version': '10.1.0', 'isSemVerMajor': True}` | [advisory](https://github.com/advisories/GHSA-2x7j-588g-ccc2) |
+| `nodemailer (server)` | high | `{'name': 'nodemailer', 'version': '10.1.0', 'isSemVerMajor': True}` | [advisory](https://github.com/advisories/GHSA-cc9r-2j5m-2m83) |
+| `nodemailer (server)` | high | `{'name': 'nodemailer', 'version': '10.1.0', 'isSemVerMajor': True}` | [advisory](https://github.com/advisories/GHSA-6vj9-mwq6-2f5v) |
+| `nodemailer (server)` | high | `{'name': 'nodemailer', 'version': '10.1.0', 'isSemVerMajor': True}` | [advisory](https://github.com/advisories/GHSA-8vvx-rff5-p5rq) |
+| `nodemailer (server)` | high | `{'name': 'nodemailer', 'version': '10.1.0', 'isSemVerMajor': True}` | [advisory](https://github.com/advisories/GHSA-v53p-9fqp-m79j) |
+| `nodemailer (server)` | high | `{'name': 'nodemailer', 'version': '10.1.0', 'isSemVerMajor': True}` | [advisory](https://github.com/advisories/GHSA-r7g4-qg5f-qqm2) |
+
+Poprawiono Next.js i eslint-config-next do 16.3.8, React/React DOM/react-server-dom-webpack do zgodnej linii 19.2.8, override sharp dla miniflare do 0.35.5 i source-map-js do 1.2.2. npm audit fix --package-lock-only --ignore-scripts bez force zastosował pozostałe poprawki zgodne z zakresami. Pliki lock zweryfikowano przez npm ci. Usunięto krytyczne zgłoszenie Next.js; aplikacja spadła z 30 do 19 zgłoszeń. Backend server nadal ma 1 HIGH dotyczące nodemailer (zależność developerska).
+
+Pozostałe zmiany wymagają osobnego przeglądu: Cloudflare Vite Plugin 1.37 -> 1.63, Wrangler/miniflare i narzędzia Sites; przejście vinext beta na nowsze wydanie; narzędzia drizzle/esbuild; Nodemailer 7 -> 10 w testach (zmiana major). braces pozostaje bez dostępnej poprawki z wskazanej linii. Nie stosowano proponowanego przez npm downgrade eslint-config-next do 14 ani drizzle-kit do 0.18. Nie użyto audit fix --force, legacy-peer-deps ani innych obejść kompatybilności. CI z kontrolą audit-level=high będzie blokował build do rozwiązania HIGH — lokalne PASS testów i buildów nie oznacza czystego audytu.
+
+Pliki build/*.mjs, build/*.ts i build/*.LICENSE w tym projekcie są źródłami integracji Sites i zostały zachowane przez wyjątki .gitignore. .openai/hosting.json to lokalna metadana narzędzia: usunięto wyłącznie śledzenie w kopii, zachowano plik i istniejącą historię bez przepisywania.
+
+
+Ograniczenia: 19 zgłoszeń w aplikacji (12 HIGH, 7 MODERATE), 1 HIGH w server; dalsze zmiany/migracje narzędzi. Bez aktualizacji produkcyjnych kontenerów, danych i konfiguracji. GitHub Release nie został jeszcze utworzony.
