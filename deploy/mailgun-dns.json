@@ -1,0 +1,35 @@
+[
+  {
+    "type": "MX",
+    "name": "inbox.temp-mail.serwerbb.win",
+    "content": "mxa.eu.mailgun.org",
+    "ttl": 300,
+    "priority": 10
+  },
+  {
+    "type": "MX",
+    "name": "inbox.temp-mail.serwerbb.win",
+    "content": "mxb.eu.mailgun.org",
+    "ttl": 300,
+    "priority": 10
+  },
+  {
+    "type": "TXT",
+    "name": "inbox.temp-mail.serwerbb.win",
+    "content": "v=spf1 include:mailgun.org ~all",
+    "ttl": 300
+  },
+  {
+    "type": "TXT",
+    "name": "email._domainkey.inbox.temp-mail.serwerbb.win",
+    "content": "k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDQBLfPBgnZRFA7kaKRHL3uvzkZ6GIeXJLrZ2vQ6jNgj33oz0WK85dsC/0QQyhXpYZRPKEFldA0zxwBWDyiI6beSf027AOaUsZBTqY1xDzMAZSMsFcEoPSDVd7w/QhHENMdE1OJtFLbA5R42Xc+f6QZEAMNhw6YamDyQsGjHJkOnwIDAQAB",
+    "ttl": 300
+  },
+  {
+    "type": "CNAME",
+    "name": "email.inbox.temp-mail.serwerbb.win",
+    "content": "eu.mailgun.org",
+    "ttl": 300,
+    "proxied": false
+  }
+]

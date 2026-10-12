@@ -15,7 +15,7 @@ export async function mailProxy(request:Request,env:MailEnv,internal=false){
   const data=await response.json() as Record<string,unknown>;
   const issued=data.token;delete data.token;
   const result=json(data,response.status);
-  if(response.ok && typeof issued==='string')result.headers.set('Set-Cookie',`${cookieName}=${issued}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=86400`);
+  if(response.ok && typeof issued==='string')result.headers.set('Set-Cookie',`${cookieName}=${issued}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=3600`);
   if(response.status===410 || (request.method==='DELETE' && response.ok))result.headers.set('Set-Cookie',`${cookieName}=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0`);
   return result;
  }catch{console.error(JSON.stringify({event:'mail_api_unavailable'}));return json({error:'Nie można połączyć się ze skrzynką. Spróbuj ponownie.'},503);}

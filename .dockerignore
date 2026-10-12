@@ -7,3 +7,12 @@ dist
 work
 outputs
 **/.env
+
+.git
+.github
+secrets
+private
+backups
+*.log
+.env
+.env.*

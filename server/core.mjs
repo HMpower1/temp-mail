@@ -26,8 +26,8 @@ export class Limiter {
 }
 export class MailStore {
  constructor(db, domain, clock = Date.now) { this.db = db; this.domain = domain; this.clock = clock; }
- async purge() { await this.db.query('DELETE FROM mailboxes WHERE expires_at <= $1', [this.clock()]); }
- publicBox(row) { return {address: row.address, createdAt: Number(row.created_at), expiresAt: Number(row.expires_at), serverNow: this.clock(), maxExpiresAt: Number(row.created_at) + 24 * HOUR, deliveryReady: process.env.MAIL_INGRESS_READY === 'true'}; }
+ async purge() { await this.db.query('DELETE FROM mailboxes WHERE LEAST(expires_at,created_at+$2) <= $1', [this.clock(),HOUR]); }
+ publicBox(row) { return {address: row.address, createdAt: Number(row.created_at), expiresAt: Math.min(Number(row.expires_at),Number(row.created_at)+HOUR), serverNow: this.clock(), maxExpiresAt: Number(row.created_at) + HOUR, deliveryReady: process.env.MAIL_INGRESS_READY === 'true' && !!process.env.MAILGUN_WEBHOOK_SIGNING_KEY}; }
  async create() {
   await this.purge();
   const token = randomBytes(32).toString('base64url'); const now = this.clock();
@@ -39,35 +39,33 @@ export class MailStore {
  async get(token) {
   if (!token || !/^[A-Za-z0-9_-]{43}$/.test(token)) throw new MailError(401,'Brak skrzynki. Wygeneruj nowy adres.');
   await this.purge();
-  const r = await this.db.query('SELECT * FROM mailboxes WHERE token_hash=$1 AND expires_at>$2',[digest(token),this.clock()]);
+  const r = await this.db.query('SELECT * FROM mailboxes WHERE token_hash=$1 AND LEAST(expires_at,created_at+3600000)>$2',[digest(token),this.clock()]);
   if (!r.rows[0]) throw new MailError(410,'Skrzynka wygasła. Jej wiadomości zostały usunięte.');
   return r.rows[0];
  }
  async status(token) { const box=await this.get(token); return this.publicBox(box); }
  async extend(token) {
   await this.get(token);
-  const r = await this.db.query('UPDATE mailboxes SET expires_at=LEAST(expires_at+$1,created_at+$2) WHERE token_hash=$3 AND expires_at>$4 AND expires_at<created_at+$2 RETURNING *',[HOUR,24*HOUR,digest(token),this.clock()]);
-  if (!r.rows[0]) { await this.get(token); throw new MailError(409,'Osiągnięto limit 24 godzin.'); }
-  return this.publicBox(r.rows[0]);
+  throw new MailError(409,'Maksymalna ważność skrzynki wynosi 60 minut.');
  }
  async remove(token) { await this.db.query('DELETE FROM mailboxes WHERE token_hash=$1',[digest(token || '')]); return {deleted:true}; }
  async list(token) {
   const box = await this.get(token);
-  const r = await this.db.query('SELECT id,sender,subject,received_at,attachments FROM messages WHERE mailbox_id=$1 AND EXISTS(SELECT 1 FROM mailboxes WHERE id=$1 AND expires_at>$2) ORDER BY received_at DESC LIMIT 100',[box.id,this.clock()]);
+  const r = await this.db.query('SELECT id,sender,subject,received_at,attachments FROM messages WHERE mailbox_id=$1 AND EXISTS(SELECT 1 FROM mailboxes WHERE id=$1 AND LEAST(expires_at,created_at+3600000)>$2) ORDER BY received_at DESC LIMIT 100',[box.id,this.clock()]);
   return {box:this.publicBox(box),messages:r.rows.map(row=>({...row,received_at:Number(row.received_at)}))};
  }
  async read(token,id) {
   if (!/^[0-9a-f-]{36}$/.test(id)) throw new MailError(404,'Nie znaleziono wiadomości.');
   const box=await this.get(token);
-  const r=await this.db.query('SELECT m.* FROM messages m JOIN mailboxes b ON b.id=m.mailbox_id WHERE m.id=$1 AND b.id=$2 AND b.expires_at>$3',[id,box.id,this.clock()]);
+  const r=await this.db.query('SELECT m.* FROM messages m JOIN mailboxes b ON b.id=m.mailbox_id WHERE m.id=$1 AND b.id=$2 AND LEAST(b.expires_at,b.created_at+3600000)>$3',[id,box.id,this.clock()]);
   if (!r.rows[0]) throw new MailError(404,'Nie znaleziono wiadomości.');
   return {...r.rows[0],received_at:Number(r.rows[0].received_at)};
  }
  async recipient(address) {
-  const r=await this.db.query('SELECT id FROM mailboxes WHERE address=$1 AND expires_at>$2',[address.toLowerCase(),this.clock()]);
+  const r=await this.db.query('SELECT id FROM mailboxes WHERE address=$1 AND LEAST(expires_at,created_at+3600000)>$2',[address.toLowerCase(),this.clock()]);
   return !!r.rows.length;
  }
- async receive(address,mail,size) {
+ async receive(address,mail,size,eventKey=null) {
   if (size>MAX_MESSAGE) throw new MailError(552,'Wiadomość przekracza limit 2 MB.');
   const attachments=(mail.attachments || []).map(a=>({filename:String(a.filename || 'załącznik').slice(0,200),size:a.size || a.content?.length || 0}));
   if (attachments.length>10 || attachments.some(a=>a.size>MAX_ATTACHMENT)) throw new MailError(552,'Załączniki przekraczają limit.');
@@ -75,11 +73,15 @@ export class MailStore {
   const db=await this.db.connect();
   try {
    await db.query('BEGIN');
-   const b=await db.query('SELECT id FROM mailboxes WHERE address=$1 AND expires_at>$2 FOR UPDATE',[address.toLowerCase(),this.clock()]);
+   const b=await db.query('SELECT id FROM mailboxes WHERE address=$1 AND LEAST(expires_at,created_at+$3)>$2 FOR UPDATE',[address.toLowerCase(),this.clock(),HOUR]);
    if (!b.rows[0]) throw new MailError(550,'Nieznana lub wygasła skrzynka.');
+   if(eventKey){
+    const inserted=await db.query('INSERT INTO inbound_events(mailbox_id,event_key) VALUES($1,$2) ON CONFLICT DO NOTHING RETURNING event_key',[b.rows[0].id,eventKey]);
+    if(!inserted.rows.length){await db.query('COMMIT');return {duplicate:true};}
+   }
    const q=await db.query('SELECT count(*)::int AS count,COALESCE(sum(size),0)::bigint AS bytes FROM messages WHERE mailbox_id=$1',[b.rows[0].id]);
    if(q.rows[0].count>=100 || Number(q.rows[0].bytes)+size>10*MAX_MESSAGE) throw new MailError(452,'Skrzynka jest pełna.');
-   const result=await db.query('INSERT INTO messages(id,mailbox_id,sender,subject,received_at,text_body,html_body,size,attachments) SELECT $1,$2,$3,$4,$5,$6,$7,$8,$9::jsonb WHERE EXISTS(SELECT 1 FROM mailboxes WHERE id=$2 AND expires_at>$5) RETURNING id',[
+   const result=await db.query('INSERT INTO messages(id,mailbox_id,sender,subject,received_at,text_body,html_body,size,attachments) SELECT $1,$2,$3,$4,$5,$6,$7,$8,$9::jsonb WHERE EXISTS(SELECT 1 FROM mailboxes WHERE id=$2 AND LEAST(expires_at,created_at+3600000)>$5) RETURNING id',[
     randomUUID(),b.rows[0].id,String(mail.from?.text || 'Nieznany nadawca').slice(0,500),String(mail.subject || '(bez tematu)').slice(0,500),this.clock(),String(mail.text || '').slice(0,MAX_MESSAGE),cleanHtml(mail.html),size,JSON.stringify(attachments)
    ]);
    if(!result.rows.length) throw new MailError(550,'Skrzynka wygasła.');

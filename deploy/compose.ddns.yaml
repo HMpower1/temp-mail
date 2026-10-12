@@ -13,3 +13,18 @@ services:
     volumes:
       - ${CLOUDFLARE_TOKEN_FILE:?Set CLOUDFLARE_TOKEN_FILE}:/run/secrets/cloudflare_api_token:ro
     logging: {driver: local, options: {max-size: 5m, max-file: '2'}}
+
+  apex-ddns:
+    image: favonia/cloudflare-ddns:1
+    restart: unless-stopped
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    environment:
+      CLOUDFLARE_API_TOKEN_FILE: /run/secrets/cloudflare_api_token
+      IP4_DOMAINS: serwerbb.win
+      PROXIED: 'true'
+      RECORD_COMMENT: Apex ads.txt DDNS
+    volumes:
+      - ${CLOUDFLARE_TOKEN_FILE:?Set CLOUDFLARE_TOKEN_FILE}:/run/secrets/cloudflare_api_token:ro
+    logging: {driver: local, options: {max-size: 5m, max-file: "2"}}

@@ -9,8 +9,8 @@ console.log(`Created ${data.address}; expires ${new Date(data.expiresAt).toISOSt
 const inbox=await fetch(`${origin}/api/messages`,{headers:{Cookie:cookie}});
 if(!inbox.ok)throw new Error(`Inbox failed: HTTP ${inbox.status}`);
 const extended=await fetch(`${origin}/api/mailbox/extend`,{method:'POST',headers:{Origin:origin,Cookie:cookie}});
-if(!extended.ok||(await extended.json()).expiresAt!==data.expiresAt+3600000)throw new Error('Extend failed');
+if(extended.status!==409)throw new Error('Mailbox must not exceed 60 minutes');
 const deleted=await fetch(`${origin}/api/mailbox`,{method:'DELETE',headers:{Origin:origin,Cookie:cookie}});
 if(!deleted.ok)throw new Error('Delete failed');
 if((await fetch(`${origin}/api/messages`,{headers:{Cookie:cookie}})).status!==410)throw new Error('Deleted mailbox still accessible');
-console.log('PASS: create, inbox, extension, deletion and isolation after deletion');
+console.log('PASS: create, inbox, 60-minute limit, deletion and isolation after deletion');

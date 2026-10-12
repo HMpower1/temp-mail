@@ -23,6 +23,7 @@ services:
       MAIL_DOMAIN: ${MAIL_DOMAIN:-inbox.temp-mail.serwerbb.win}
       MAIL_API_KEY: ${MAIL_API_KEY:?Set MAIL_API_KEY}
       MAIL_INGRESS_READY: ${MAIL_INGRESS_READY:-false}
+      MAILGUN_WEBHOOK_SIGNING_KEY: ${MAILGUN_WEBHOOK_SIGNING_KEY:-}
     # Local testing first; production SMTP mapping uses smtp.override.yaml.
     ports: ["127.0.0.1:2525:2525"]
     depends_on:
@@ -39,6 +40,12 @@ services:
     environment:
       MAIL_API_ORIGIN: http://receiver:8080
       SITE_ORIGIN: https://temp-mail.serwerbb.win
+      ADSENSE_ENABLED: ${ADSENSE_ENABLED:-false}
+      ADSENSE_SITE_STATUS: ${ADSENSE_SITE_STATUS:-}
+      ADSENSE_CMP_PUBLISHED: ${ADSENSE_CMP_PUBLISHED:-false}
+      NEXT_PUBLIC_ADSENSE_CLIENT: ${NEXT_PUBLIC_ADSENSE_CLIENT:-}
+      NEXT_PUBLIC_ADSENSE_SLOT_TOP: ${NEXT_PUBLIC_ADSENSE_SLOT_TOP:-}
+      NEXT_PUBLIC_ADSENSE_SLOT_BOTTOM: ${NEXT_PUBLIC_ADSENSE_SLOT_BOTTOM:-}
       MAIL_API_KEY: ${MAIL_API_KEY:?Set MAIL_API_KEY}
     depends_on: [receiver]
     restart: unless-stopped
