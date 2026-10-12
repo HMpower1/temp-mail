@@ -1,19 +1,19 @@
-# Rzeczywisty wynik kontroli â€” 2026-10-12
+# Rzeczywisty wynik kontroli — 2026-10-12
 
 24/24 testy PASS; lint PASS; TypeScript PASS; build Next.js 16.3.8 PASS po poprawkach.
 
 ## Sekrety i dane
 
-Gitleaks 8.30.1: przygotowany zestaw ĹşrĂłdeĹ‚ PASS. Wykluczono rzeczywiste .env, token DDNS, dane NAS, prywatne zasoby, bazy, kopie, zaleĹĽnoĹ›ci i wyniki buildĂłw. Szablony .env.example zawierajÄ… nazwy oraz puste wartoĹ›ci/przykĹ‚adowÄ… konfiguracjÄ™. W Temp Mail sprawdzono takĹĽe caĹ‚Ä… oryginalnÄ… historiÄ™ --all, bez wykryÄ‡. DokĹ‚adny finalny zestaw wersjonowanych plikĂłw i SHA zapisuje projects-index/MANIFESTY.json po przygotowaniu commitĂłw.
+Gitleaks 8.30.1: przygotowany zestaw źródeł PASS. Wykluczono rzeczywiste .env, token DDNS, dane NAS, prywatne zasoby, bazy, kopie, zależności i wyniki buildów. Szablony .env.example zawierają nazwy oraz puste wartości/przykładową konfigurację. W Temp Mail sprawdzono także całą oryginalną historię --all, bez wykryć. Dokładny finalny zestaw wersjonowanych plików i SHA zapisuje projects-index/MANIFESTY.json po przygotowaniu commitów.
 
-Sprawdzono pliki juĹĽ Ĺ›ledzone; .gitignore nie byĹ‚ traktowany jako dowĂłd braku sekretĂłw. Kod obejmuje przykĹ‚adowe dane testowe i publiczne treĹ›ci stron, ale nie bazy klientĂłw/uĹĽytkownikĂłw, sesje lub listy kontaktĂłw. Skaner nie gwarantuje wykrycia kaĹĽdego nietypowego sekretu ani wszystkich danych osobowych; przeglÄ…d obejmowaĹ‚ ĹşrĂłdĹ‚a/config oraz wykluczenie danych lokalnych. Nie przepisywano historii.
+Sprawdzono pliki już śledzone; .gitignore nie był traktowany jako dowód braku sekretów. Kod obejmuje przykładowe dane testowe i publiczne treści stron, ale nie bazy klientów/użytkowników, sesje lub listy kontaktów. Skaner nie gwarantuje wykrycia każdego nietypowego sekretu ani wszystkich danych osobowych; przegląd obejmował źródła/config oraz wykluczenie danych lokalnych. Nie przepisywano historii.
 
-## ZaleĹĽnoĹ›ci
+## Zależności
 
-KoĹ„cowy audyt npm/pnpm: critical: 0, high: 12, moderate: 7, low: 0.
+Końcowy audyt npm/pnpm: critical: 0, high: 12, moderate: 7, low: 0.
 Odbiornik server: high: 1, critical: 0. Wersja pakietu pozostaje 1.0.0.
 
-| Pakiet | Waga | Poprawka wskazana przez bazÄ™ / uwaga | ĹąrĂłdĹ‚o |
+| Pakiet | Waga | Poprawka wskazana przez bazę / uwaga | Źródło |
 |---|---|---|---|
 | `braces` | high | `{'name': 'eslint-config-next', 'version': '14.2.35', 'isSemVerMajor': True}` | [advisory](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm) |
 | `esbuild` | moderate | `{'name': 'drizzle-kit', 'version': '0.18.1', 'isSemVerMajor': True}` | [advisory](https://github.com/advisories/GHSA-67mh-4wv8-2f99) |
@@ -59,16 +59,16 @@ Odbiornik server: high: 1, critical: 0. Wersja pakietu pozostaje 1.0.0.
 | `nodemailer (server)` | high | `{'name': 'nodemailer', 'version': '10.1.0', 'isSemVerMajor': True}` | [advisory](https://github.com/advisories/GHSA-v53p-9fqp-m79j) |
 | `nodemailer (server)` | high | `{'name': 'nodemailer', 'version': '10.1.0', 'isSemVerMajor': True}` | [advisory](https://github.com/advisories/GHSA-r7g4-qg5f-qqm2) |
 
-Poprawiono Next.js i eslint-config-next do 16.3.8, React/React DOM/react-server-dom-webpack do zgodnej linii 19.2.8, override sharp dla miniflare do 0.35.5 i source-map-js do 1.2.2. npm audit fix --package-lock-only --ignore-scripts bez force zastosowaĹ‚ pozostaĹ‚e poprawki zgodne z zakresami. Pliki lock zweryfikowano przez npm ci. UsuniÄ™to krytyczne zgĹ‚oszenie Next.js; aplikacja spadĹ‚a z 30 do 19 zgĹ‚oszeĹ„. Backend server nadal ma 1 HIGH dotyczÄ…ce nodemailer (zaleĹĽnoĹ›Ä‡ developerska).
+Poprawiono Next.js i eslint-config-next do 16.3.8, React/React DOM/react-server-dom-webpack do zgodnej linii 19.2.8, override sharp dla miniflare do 0.35.5 i source-map-js do 1.2.2. npm audit fix --package-lock-only --ignore-scripts bez force zastosował pozostałe poprawki zgodne z zakresami. Pliki lock zweryfikowano przez npm ci. Usunięto krytyczne zgłoszenie Next.js; aplikacja spadła z 30 do 19 zgłoszeń. Backend server nadal ma 1 HIGH dotyczące nodemailer (zależność developerska).
 
-PozostaĹ‚e zmiany wymagajÄ… osobnego przeglÄ…du: Cloudflare Vite Plugin 1.37 -> 1.63, Wrangler/miniflare i narzÄ™dzia Sites; przejĹ›cie vinext beta na nowsze wydanie; narzÄ™dzia drizzle/esbuild; Nodemailer 7 -> 10 w testach (zmiana major). braces pozostaje bez dostÄ™pnej poprawki z wskazanej linii. Nie stosowano proponowanego przez npm downgrade eslint-config-next do 14 ani drizzle-kit do 0.18. Nie uĹĽyto audit fix --force, legacy-peer-deps ani innych obejĹ›Ä‡ kompatybilnoĹ›ci. CI z kontrolÄ… audit-level=high bÄ™dzie blokowaĹ‚ build do rozwiÄ…zania HIGH â€” lokalne PASS testĂłw i buildĂłw nie oznacza czystego audytu.
+Pozostałe zmiany wymagają osobnego przeglądu: Cloudflare Vite Plugin 1.37 -> 1.63, Wrangler/miniflare i narzędzia Sites; przejście vinext beta na nowsze wydanie; narzędzia drizzle/esbuild; Nodemailer 7 -> 10 w testach (zmiana major). braces pozostaje bez dostępnej poprawki z wskazanej linii. Nie stosowano proponowanego przez npm downgrade eslint-config-next do 14 ani drizzle-kit do 0.18. Nie użyto audit fix --force, legacy-peer-deps ani innych obejść kompatybilności. CI z kontrolą audit-level=high będzie blokował build do rozwiązania HIGH — lokalne PASS testów i buildów nie oznacza czystego audytu.
 
-Pliki build/*.mjs, build/*.ts i build/*.LICENSE w tym projekcie sÄ… ĹşrĂłdĹ‚ami integracji Sites i zostaĹ‚y zachowane przez wyjÄ…tki .gitignore. .openai/hosting.json to lokalna metadana narzÄ™dzia: usuniÄ™to wyĹ‚Ä…cznie Ĺ›ledzenie w kopii, zachowano plik i istniejÄ…cÄ… historiÄ™ bez przepisywania.
+Pliki build/*.mjs, build/*.ts i build/*.LICENSE w tym projekcie są źródłami integracji Sites i zostały zachowane przez wyjątki .gitignore. .openai/hosting.json to lokalna metadana narzędzia: usunięto wyłącznie śledzenie w kopii, zachowano plik i istniejącą historię bez przepisywania.
 
 
 ## Obrazy Docker i ograniczenia
 
-Lokalny Trivy 0.75.0 przeskanowaĹ‚ obrazy bez wysyĹ‚ania kodu. Obrazy dziaĹ‚ajÄ…cych aplikacji pochodzÄ… z obecnego wdroĹĽenia, nie z poprawionych kopii ĹşrĂłdeĹ‚. SzczegĂłĹ‚owe CVE i wersje: projects-index/AUDYT-DOCKER.json, podsumowanie: projects-index/RAPORT.md. Nie restartowano produkcji, nie zmieniano sekretĂłw ani danych. Aktualizacja baz/obrazĂłw i odtwarzanie wymagajÄ… osobnego planu wdroĹĽenia. Lokalny build JS nie jest skanem nowego kompletnego obrazu produkcyjnego.
+Lokalny Trivy 0.75.0 przeskanował obrazy bez wysyłania kodu. Obrazy działających aplikacji pochodzą z obecnego wdrożenia, nie z poprawionych kopii źródeł. Szczegółowe CVE i wersje: projects-index/AUDYT-DOCKER.json, podsumowanie: projects-index/RAPORT.md. Nie restartowano produkcji, nie zmieniano sekretów ani danych. Aktualizacja baz/obrazów i odtwarzanie wymagają osobnego planu wdrożenia. Lokalny build JS nie jest skanem nowego kompletnego obrazu produkcyjnego.
 
 ## GitHub — stan po publikacji
 
