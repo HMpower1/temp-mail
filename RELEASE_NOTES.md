@@ -1,13 +1,13 @@
 # 0.1.0 (prerelease)
 
-Aktualne źródła projektu, prywatne wersjonowanie, dokumentacja i kontrole.
+Aktualne ĹşrĂłdĹ‚a projektu, prywatne wersjonowanie, dokumentacja i kontrole.
 
 24/24 testy PASS; lint PASS; TypeScript PASS; build Next.js 16.3.8 PASS po poprawkach.
 
-Końcowy audyt npm/pnpm: critical: 0, high: 12, moderate: 7, low: 0.
+KoĹ„cowy audyt npm/pnpm: critical: 0, high: 12, moderate: 7, low: 0.
 Odbiornik server: high: 1, critical: 0. Wersja pakietu pozostaje 1.0.0.
 
-| Pakiet | Waga | Poprawka wskazana przez bazę / uwaga | Źródło |
+| Pakiet | Waga | Poprawka wskazana przez bazÄ™ / uwaga | ĹąrĂłdĹ‚o |
 |---|---|---|---|
 | `braces` | high | `{'name': 'eslint-config-next', 'version': '14.2.35', 'isSemVerMajor': True}` | [advisory](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm) |
 | `esbuild` | moderate | `{'name': 'drizzle-kit', 'version': '0.18.1', 'isSemVerMajor': True}` | [advisory](https://github.com/advisories/GHSA-67mh-4wv8-2f99) |
@@ -53,11 +53,13 @@ Odbiornik server: high: 1, critical: 0. Wersja pakietu pozostaje 1.0.0.
 | `nodemailer (server)` | high | `{'name': 'nodemailer', 'version': '10.1.0', 'isSemVerMajor': True}` | [advisory](https://github.com/advisories/GHSA-v53p-9fqp-m79j) |
 | `nodemailer (server)` | high | `{'name': 'nodemailer', 'version': '10.1.0', 'isSemVerMajor': True}` | [advisory](https://github.com/advisories/GHSA-r7g4-qg5f-qqm2) |
 
-Poprawiono Next.js i eslint-config-next do 16.3.8, React/React DOM/react-server-dom-webpack do zgodnej linii 19.2.8, override sharp dla miniflare do 0.35.5 i source-map-js do 1.2.2. npm audit fix --package-lock-only --ignore-scripts bez force zastosował pozostałe poprawki zgodne z zakresami. Pliki lock zweryfikowano przez npm ci. Usunięto krytyczne zgłoszenie Next.js; aplikacja spadła z 30 do 19 zgłoszeń. Backend server nadal ma 1 HIGH dotyczące nodemailer (zależność developerska).
+Poprawiono Next.js i eslint-config-next do 16.3.8, React/React DOM/react-server-dom-webpack do zgodnej linii 19.2.8, override sharp dla miniflare do 0.35.5 i source-map-js do 1.2.2. npm audit fix --package-lock-only --ignore-scripts bez force zastosowaĹ‚ pozostaĹ‚e poprawki zgodne z zakresami. Pliki lock zweryfikowano przez npm ci. UsuniÄ™to krytyczne zgĹ‚oszenie Next.js; aplikacja spadĹ‚a z 30 do 19 zgĹ‚oszeĹ„. Backend server nadal ma 1 HIGH dotyczÄ…ce nodemailer (zaleĹĽnoĹ›Ä‡ developerska).
 
-Pozostałe zmiany wymagają osobnego przeglądu: Cloudflare Vite Plugin 1.37 -> 1.63, Wrangler/miniflare i narzędzia Sites; przejście vinext beta na nowsze wydanie; narzędzia drizzle/esbuild; Nodemailer 7 -> 10 w testach (zmiana major). braces pozostaje bez dostępnej poprawki z wskazanej linii. Nie stosowano proponowanego przez npm downgrade eslint-config-next do 14 ani drizzle-kit do 0.18. Nie użyto audit fix --force, legacy-peer-deps ani innych obejść kompatybilności. CI z kontrolą audit-level=high będzie blokował build do rozwiązania HIGH — lokalne PASS testów i buildów nie oznacza czystego audytu.
+PozostaĹ‚e zmiany wymagajÄ… osobnego przeglÄ…du: Cloudflare Vite Plugin 1.37 -> 1.63, Wrangler/miniflare i narzÄ™dzia Sites; przejĹ›cie vinext beta na nowsze wydanie; narzÄ™dzia drizzle/esbuild; Nodemailer 7 -> 10 w testach (zmiana major). braces pozostaje bez dostÄ™pnej poprawki z wskazanej linii. Nie stosowano proponowanego przez npm downgrade eslint-config-next do 14 ani drizzle-kit do 0.18. Nie uĹĽyto audit fix --force, legacy-peer-deps ani innych obejĹ›Ä‡ kompatybilnoĹ›ci. CI z kontrolÄ… audit-level=high bÄ™dzie blokowaĹ‚ build do rozwiÄ…zania HIGH â€” lokalne PASS testĂłw i buildĂłw nie oznacza czystego audytu.
 
-Pliki build/*.mjs, build/*.ts i build/*.LICENSE w tym projekcie są źródłami integracji Sites i zostały zachowane przez wyjątki .gitignore. .openai/hosting.json to lokalna metadana narzędzia: usunięto wyłącznie śledzenie w kopii, zachowano plik i istniejącą historię bez przepisywania.
+Pliki build/*.mjs, build/*.ts i build/*.LICENSE w tym projekcie sÄ… ĹşrĂłdĹ‚ami integracji Sites i zostaĹ‚y zachowane przez wyjÄ…tki .gitignore. .openai/hosting.json to lokalna metadana narzÄ™dzia: usuniÄ™to wyĹ‚Ä…cznie Ĺ›ledzenie w kopii, zachowano plik i istniejÄ…cÄ… historiÄ™ bez przepisywania.
 
 
-Ograniczenia: 19 zgłoszeń w aplikacji (12 HIGH, 7 MODERATE), 1 HIGH w server; dalsze zmiany/migracje narzędzi. Bez aktualizacji produkcyjnych kontenerów, danych i konfiguracji. GitHub Release nie został jeszcze utworzony.
+Ograniczenia: 19 zgĹ‚oszeĹ„ w aplikacji (12 HIGH, 7 MODERATE), 1 HIGH w server; dalsze zmiany/migracje narzÄ™dzi. Bez aktualizacji produkcyjnych kontenerĂłw, danych i konfiguracji. GitHub Release nie zostaĹ‚ jeszcze utworzony.
+
+CI commita wydania: failure. Pełny stan zdalny: projects-index/RAPORT.md.
